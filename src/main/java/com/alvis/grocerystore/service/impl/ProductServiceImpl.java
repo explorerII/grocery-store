@@ -1,5 +1,6 @@
 package com.alvis.grocerystore.service.impl;
 
+import com.alvis.grocerystore.constant.ProductCategory;
 import com.alvis.grocerystore.dao.ProductDao;
 import com.alvis.grocerystore.dto.ProductRequest;
 import com.alvis.grocerystore.model.Product;
@@ -16,8 +17,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        return productDao.getProducts(category, search);
     }
 
     @Override
