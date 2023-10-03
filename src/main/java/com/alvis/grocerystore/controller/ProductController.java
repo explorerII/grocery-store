@@ -1,6 +1,7 @@
 package com.alvis.grocerystore.controller;
 
 import com.alvis.grocerystore.constant.ProductCategory;
+import com.alvis.grocerystore.dto.ProductQueryParams;
 import com.alvis.grocerystore.dto.ProductRequest;
 import com.alvis.grocerystore.model.Product;
 import com.alvis.grocerystore.service.ProductService;
@@ -22,7 +23,11 @@ public class ProductController {
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search){
 
-        List<Product> productList = productService.getProducts(category, search);
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.status(200).body(productList);
     }
