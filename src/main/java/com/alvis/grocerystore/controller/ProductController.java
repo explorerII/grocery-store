@@ -4,6 +4,7 @@ import com.alvis.grocerystore.dto.ProductRequest;
 import com.alvis.grocerystore.model.Product;
 import com.alvis.grocerystore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,26 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity createProduct(@RequestBody @Valid ProductRequest productRequest){
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
 
         Integer productId = productService.createProduct(productRequest);
 
         Product product = productService.getProductById(productId);
 
         return ResponseEntity.status(201).body(product);
+    }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest){
+
+        // check if product not exists
+        if (productService.getProductById(productId) == null) {
+            return ResponseEntity.status(404).build();
+        }
+
+        productService.updateProduct(productId, productRequest);
+
+        return ResponseEntity.status(200).body(productService.getProductById(productId));
     }
 }
