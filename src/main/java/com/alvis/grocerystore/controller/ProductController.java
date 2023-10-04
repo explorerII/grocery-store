@@ -5,6 +5,7 @@ import com.alvis.grocerystore.dto.ProductQueryParams;
 import com.alvis.grocerystore.dto.ProductRequest;
 import com.alvis.grocerystore.model.Product;
 import com.alvis.grocerystore.service.ProductService;
+import com.alvis.grocerystore.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             // filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -44,9 +45,20 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
+        // get product list
         List<Product> productList = productService.getProducts(productQueryParams);
 
-        return ResponseEntity.status(200).body(productList);
+        // get numbers of product
+        Integer toatal = productService.countProduct(productQueryParams);
+
+        // for pagination
+        Page page = new Page();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setResult(productList);
+        page.setTotal(toatal);
+
+        return ResponseEntity.status(200).body(page);
     }
 
     @GetMapping("/products/{productId}")
