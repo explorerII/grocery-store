@@ -1,6 +1,7 @@
 package com.alvis.grocerystore.service.impl;
 
 import com.alvis.grocerystore.dao.UserDao;
+import com.alvis.grocerystore.dto.UserLoginRequest;
 import com.alvis.grocerystore.dto.UserRegisterRequest;
 import com.alvis.grocerystore.model.User;
 import com.alvis.grocerystore.service.UserService;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
     public Integer register(UserRegisterRequest userRegisterRequest) {
 
         // check if email is registered
-        User user = userDao.getUserByEmail(userRegisterRequest);
+        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
         if (user != null) {
             log.warn("the email {} is already registered.", userRegisterRequest.getEmail());
@@ -37,5 +38,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if (user == null) {
+            log.warn("the email {} is not registered.", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("the eamil {} with password is not correct.", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
