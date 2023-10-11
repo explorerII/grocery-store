@@ -57,4 +57,21 @@ public class UserDaoImpl implements UserDao {
             return null;
         }
     }
+
+    @Override
+    public User getUserByEmail(UserRegisterRequest userRegisterRequest) {
+
+        String sql = "SELECT user_id, email, password, created_date, last_modified_date FROM user WHERE email = :email";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("email", userRegisterRequest.getEmail());
+
+        List<User> list = namedParameterJdbcTemplate.query(sql, new MapSqlParameterSource(map), new UserRowMapper());
+
+        if (list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
 }
