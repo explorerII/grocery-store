@@ -1,6 +1,7 @@
 package com.alvis.grocerystore.controller;
 
 import com.alvis.grocerystore.dto.CreateOrderRequest;
+import com.alvis.grocerystore.model.Order;
 import com.alvis.grocerystore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,16 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/users/{userId}/orders")
-    public ResponseEntity<?> createOrder(@PathVariable Integer userId,
+    public ResponseEntity<Order> createOrder(@PathVariable Integer userId,
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest) {
 
         Integer orderId = orderService.createOrder(userId, createOrderRequest);
 
-        return ResponseEntity.status(201).body(orderId);
+        // get order
+        Order order = orderService.getOrderById(orderId);
+        // get orderItem with detail and set up order
+        order.setOrderItemWithDetailList(orderService.getOrderItemsWithDetailById(orderId));
+
+        return ResponseEntity.status(201).body(order);
     }
 }

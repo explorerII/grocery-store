@@ -4,6 +4,8 @@ import com.alvis.grocerystore.dao.OrderDao;
 import com.alvis.grocerystore.dao.ProductDao;
 import com.alvis.grocerystore.dto.BuyItem;
 import com.alvis.grocerystore.dto.CreateOrderRequest;
+import com.alvis.grocerystore.dto.OrderItemWithDetail;
+import com.alvis.grocerystore.model.Order;
 import com.alvis.grocerystore.model.OrderItem;
 import com.alvis.grocerystore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+
+        return orderDao.getOrderById(orderId);
+    }
+
+    @Override
+    public List<OrderItemWithDetail> getOrderItemsWithDetailById(Integer orderId) {
+        return orderDao.getOrderItemsWithDetailById(orderId);
+    }
 
     @Transactional
     @Override

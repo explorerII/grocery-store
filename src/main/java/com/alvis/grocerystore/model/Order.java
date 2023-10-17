@@ -1,6 +1,9 @@
 package com.alvis.grocerystore.model;
 
+import com.alvis.grocerystore.dto.OrderItemWithDetail;
+
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private Integer orderId;
@@ -8,6 +11,16 @@ public class Order {
     private Integer totalAmount;
     private Date createdDate;
     private Date lastModifiedDate;
+
+    private List<OrderItemWithDetail> orderItemWithDetailList;
+
+    public List<OrderItemWithDetail> getOrderItemWithDetailList() {
+        return orderItemWithDetailList;
+    }
+
+    public void setOrderItemWithDetailList(List<OrderItemWithDetail> orderItemWithDetailList) {
+        this.orderItemWithDetailList = orderItemWithDetailList;
+    }
 
     public Integer getOrderId() {
         return orderId;
