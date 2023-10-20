@@ -1,6 +1,5 @@
 package com.alvis.grocerystore.dao.impl;
 
-import com.alvis.grocerystore.constant.ProductCategory;
 import com.alvis.grocerystore.dao.ProductDao;
 import com.alvis.grocerystore.dto.ProductQueryParams;
 import com.alvis.grocerystore.dto.ProductRequest;
@@ -9,7 +8,6 @@ import com.alvis.grocerystore.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -116,6 +114,18 @@ public class ProductDaoImpl implements ProductDao {
         map.put("stock", productRequest.getStock());
         map.put("description", productRequest.getDescription());
         map.put("lastModifiedDate", new Date());
+        map.put("productId", productId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    @Override
+    public void updateStock(Integer productId, Integer stock) {
+
+        String sql = "UPDATE product SET stock = :stock WHERE product_id = :productId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("stock", stock);
         map.put("productId", productId);
 
         namedParameterJdbcTemplate.update(sql, map);
