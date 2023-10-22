@@ -2,6 +2,7 @@ package com.alvis.grocerystore.dao.impl;
 
 import com.alvis.grocerystore.dao.OrderDao;
 import com.alvis.grocerystore.dto.OrderItemWithDetail;
+import com.alvis.grocerystore.dto.OrderQueryParams;
 import com.alvis.grocerystore.model.Order;
 import com.alvis.grocerystore.model.OrderItem;
 import com.alvis.grocerystore.rowmapper.OrderItemWithDetailRowMapper;
@@ -23,6 +24,38 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+
+        String sql = "SELECT count(*) FROM `order` where user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", orderQueryParams.getUserId());
+
+        return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date " +
+                "FROM `order` WHERE user_id = :userId " +
+                "ORDER BY created_date DESC LIMIT :limit OFFSET :offset";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", orderQueryParams.getUserId());
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> list = namedParameterJdbcTemplate.query(sql, new MapSqlParameterSource(map), new OrderRowMapper());
+
+        if (list.size() > 0) {
+            return list;
+        } else {
+            return null;
+        }
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {

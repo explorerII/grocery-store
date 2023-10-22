@@ -6,6 +6,7 @@ import com.alvis.grocerystore.dao.UserDao;
 import com.alvis.grocerystore.dto.BuyItem;
 import com.alvis.grocerystore.dto.CreateOrderRequest;
 import com.alvis.grocerystore.dto.OrderItemWithDetail;
+import com.alvis.grocerystore.dto.OrderQueryParams;
 import com.alvis.grocerystore.model.Order;
 import com.alvis.grocerystore.model.OrderItem;
 import com.alvis.grocerystore.model.Product;
@@ -33,6 +34,22 @@ public class OrderServiceImpl implements OrderService {
     private ProductDao productDao;
     @Autowired
     private UserDao userDao;
+
+    @Override
+    public Integer countOrders(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+
+        for (Order order : orderList) {
+            order.setOrderItemWithDetailList(orderDao.getOrderItemsWithDetailById(order.getOrderId()));
+        }
+        return orderList;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {
