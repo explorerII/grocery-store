@@ -1,7 +1,6 @@
 package com.alvis.grocerystore.service.impl;
 
 import com.alvis.grocerystore.dao.UserDao;
-import com.alvis.grocerystore.dto.UserLoginRequest;
 import com.alvis.grocerystore.dto.UserRegisterRequest;
 import com.alvis.grocerystore.model.User;
 import com.alvis.grocerystore.service.UserService;
@@ -9,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
@@ -20,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
@@ -32,9 +34,10 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // use md5 save password
-        String hashedPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
-        userRegisterRequest.setPassword(hashedPassword);
+        // use Bcrypt encode password
+        userRegisterRequest.setPassword(
+                passwordEncoder.encode(userRegisterRequest.getPassword()));
+
 
         // create account
         return userDao.createUser(userRegisterRequest);
@@ -43,25 +46,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
-    }
-
-    @Override
-    public User login(UserLoginRequest userLoginRequest) {
-
-        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
-
-        if (user == null) {
-            log.warn("the email {} is not registered.", userLoginRequest.getEmail());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        String hashedPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
-
-        if (user.getPassword().equals(hashedPassword)) {
-            return user;
-        } else {
-            log.warn("the email {} with password is not correct.", userLoginRequest.getEmail());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
     }
 }

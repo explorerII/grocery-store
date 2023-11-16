@@ -45,8 +45,10 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orderList = orderDao.getOrders(orderQueryParams);
 
-        for (Order order : orderList) {
-            order.setOrderItemWithDetailList(orderDao.getOrderItemsWithDetailById(order.getOrderId()));
+        if (orderList != null) {
+            for (Order order : orderList) {
+                order.setOrderItemWithDetailList(orderDao.getOrderItemsWithDetailById(order.getOrderId()));
+            }
         }
         return orderList;
     }

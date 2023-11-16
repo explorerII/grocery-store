@@ -27,10 +27,7 @@ public class OrderController {
                                        @RequestParam(defaultValue = "10") @Max(100) @Min(0) Integer limit,
                                        @RequestParam(defaultValue = "0") @Min(0) Integer offset){
 
-        OrderQueryParams orderQueryParams = new OrderQueryParams();
-        orderQueryParams.setUserId(userId);
-        orderQueryParams.setLimit(limit);
-        orderQueryParams.setOffset(offset);
+        OrderQueryParams orderQueryParams = new OrderQueryParams(userId, limit, offset);
 
         // get order list
         List<Order> orderList = orderService.getOrders(orderQueryParams);
